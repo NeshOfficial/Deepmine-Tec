@@ -1,4 +1,4 @@
-# Copyright 2024 Your Organization
+# Copyright 2021 DeepMind Technologies Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,20 +17,30 @@ import os
 import sys
 
 # -- Path setup --------------------------------------------------------------
-sys.path.insert(0, os.path.abspath('../src'))
-sys.path.append(os.path.abspath('extensions'))
+#
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
 
-from sphinxcontrib import katex
-from sphinxcontrib import youtube
+sys.path.insert(0, os.path.abspath('../'))
+sys.path.append(os.path.abspath('ext'))
+
+from sphinxcontrib import katex  # pylint: disable=g-import-not-at-top
+from sphinxcontrib import youtube  # pylint: disable=g-import-not-at-top,unused-import
 
 # -- Project information -----------------------------------------------------
+
 project = 'MuJoCo'
-copyright = '2024 Your Organization'  # Updated copyright year
-author = 'Your Organization'  # Updated author
+copyright = 'DeepMind Technologies Limited'  # pylint: disable=redefined-builtin
+author = 'Google DeepMind'
 
 # -- General configuration ---------------------------------------------------
+
 master_doc = 'index'
 
+# Add any Sphinx extension module names here, as strings. They can be
+# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+# ones.
 extensions = [
     'sphinxcontrib.bibtex',
     'sphinxcontrib.katex',
@@ -44,13 +54,19 @@ extensions = [
     'mujoco_include',
 ]
 
-github_username = 'your-organization'
+# GitHub-related options
+github_username = 'google-deepmind'
 github_repository = 'mujoco'
 
+# Bibtex references for sphinxcontrib.bibtex
 bibtex_bibfiles = ['references.bib']
 
+# Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
 
+# List of patterns, relative to source directory, that match files and
+# directories to ignore when looking for source files.
+# This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = [
     '_build',
     'Thumbs.db',
@@ -62,6 +78,7 @@ exclude_patterns = [
 ]
 
 redirects = {
+    # index.rst just contains the table of contents definition.
     'index': 'overview.html',
     'computation': 'computation/index.html',
     'programming': 'programming/index.html',
@@ -71,9 +88,11 @@ redirects = {
 rst_prolog = """
 .. include:: /includes/macros.rst
 .. include:: /includes/roles.rst
+.. include:: <isonum.txt>
 """
 
 # -- Options for autodoc -----------------------------------------------------
+
 autodoc_default_options = {
     'member-order': 'bysource',
     'special-members': True,
@@ -81,9 +100,13 @@ autodoc_default_options = {
 }
 
 # -- Options for HTML output -------------------------------------------------
+
+# The theme to use for HTML and HTML Help pages.  See the documentation for
+# a list of builtin themes.
+#
 html_theme = 'furo'
 html_title = 'MuJoCo Documentation'
-html_logo = 'images/new_logo.svg'  # Updated logo file
+html_logo = 'images/banner.svg'
 
 SHARED_CSS_VARIABLES = {
     'admonition-font-size': '1rem',
@@ -91,6 +114,7 @@ SHARED_CSS_VARIABLES = {
     'sidebar-item-font-size': '130%',
 }
 
+# font-stack--monospace used in code blocks, Inconsolata fits in 100 chars.
 html_theme_options = {
     'light_css_variables': {
         'font-stack--monospace': 'Inconsolata,Consolas,ui-monospace,monospace',
@@ -123,12 +147,15 @@ html_theme_options = {
 }
 
 for v in html_theme_options.values():
-    if isinstance(v, dict):
-        v.update(SHARED_CSS_VARIABLES)
+  if isinstance(v, dict):
+    v.update(SHARED_CSS_VARIABLES)
 
-pygments_style = 'sphinx'
+pygments_style = 'default'
 pygments_dark_style = 'monokai'
 
+# Add any paths that contain custom static files (such as style sheets) here,
+# relative to this directory. They are copied after the builtin static files,
+# so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = [
     '_static',
     'css',
@@ -151,9 +178,20 @@ favicons = [
         'sizes': '180x180',
         'href': 'favicons/favicon-180x180.png',
     },
+    {
+        'sizes': '180x180',
+        'href': 'favicons/favicon-180x180.png',
+    },
+    {
+        'sizes': '192x192',
+        'href': 'favicons/favicon-192x192.png',
+    },
 ]
 
 # -- Options for katex ------------------------------------------------------
+
+# See: https://sphinxcontrib-katex.readthedocs.io/en/0.4.1/macros.html
+# {ar au, ac} are {reference, unconstrained, constrained} acceleration, resp.
 latex_macros = r"""
     \def \d              #1{\operatorname{#1}}
     \def \ar             {a_{\rm ref}}
@@ -164,7 +202,9 @@ latex_macros = r"""
     \def \aci            {a_{1,i}}
 """
 
+# Translate LaTeX macros to KaTeX and add to options for HTML builder
 katex_macros = katex.latex_defs_to_katex_macros(latex_macros)
 katex_options = 'macros: {' + katex_macros + '}'
 
+# Add LaTeX macros for LATEX builder
 latex_elements = {'preamble': latex_macros}
