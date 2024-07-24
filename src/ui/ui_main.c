@@ -219,22 +219,24 @@ static void initOpenGL(const mjrRect* r, const mjrContext* con) {
 }
 
 
+// Assuming mjrContext is defined as follows
+struct mjrContext {
+    int charWidth[256];
+};
 
-// get text width up to specificed limit (0: 0, -1: entire string)
-static int textwidth(const char* text, const mjrContext* con, int limit) {
-  int i = 0, width = 0;
+int textwidth(const std::string& text, const mjrContext* con, int limit) {
+    // Zero limit case
+    if (limit == 0) {
+        return 0;
+    }
 
-  // zero limit
-  if (limit == 0) {
-    return 0;
-  }
+    // Calculate width using std::accumulate
+    auto end_iter = (limit < 1 || limit >= text.size()) ? text.end() : std::next(text.begin(), limit);
+    int width = std::accumulate(text.begin(), end_iter, 0, [&](int sum, char c) {
+        return sum + con->charWidth[(unsigned char)c];
+    });
 
-  // add character widths
-  while (text[i] && (limit < 1 || i < limit)) {
-    width += con->charWidth[(unsigned char)text[i++]];
-  }
-
-  return width;
+    return width;
 }
 
 
